@@ -25,7 +25,7 @@ class UsersTableSeeder extends Seeder
 			'username_old' => null,
 			'password' => Hash::make('12345678'),                
 			'name' => 'admin',                
-			'email' => 'rizki@stisipolrajahaji.ac.id',                
+			'email' => 'admin@yacanet.com',                
 			'nomor_hp' => '+612345678',
 			'nomor_hp2' => '+612345678',
 			'email_verified_at' => Carbon::now(),
@@ -40,6 +40,6 @@ class UsersTableSeeder extends Seeder
 			'updated_at' => Carbon::now()
 		]);  
 		
-		$user->assignRole('superadmin');
+		$user->syncRoles(['superadmin']);
 	}
 }

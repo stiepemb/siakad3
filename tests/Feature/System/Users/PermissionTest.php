@@ -39,9 +39,7 @@ class PermissionTest extends TestCase
             'group' => 0,
         ]);
 
-        \Log::info($response->getContent());
-
-        $this->assertTrue(true);
+        $response->assertRedirect(route('system.permissions', absolute: false));
     }
 
     public function test_user_superadmin_can_delete_permission()
@@ -53,6 +51,6 @@ class PermissionTest extends TestCase
 
         $response = $this->actingAs($user)->put($this->pathUrl . '/' . $permission->id, []);
 
-        $this->assertTrue(true);
+        $response->assertRedirect(route('system.permissions', absolute: false));
     }
 }

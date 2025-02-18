@@ -92,5 +92,7 @@ class UserPermissionController extends Controller
         }
 
         app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+
+        return redirect()->route('system.permissions')->with('success', 'Permission berhasil dibuat');
     }
 }

@@ -6,8 +6,8 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
-
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class Controller extends BaseController
 {
@@ -18,21 +18,21 @@ class Controller extends BaseController
      */
     protected function guard()
     {
-        return \Auth::guard();
+        return Auth::guard();
     }
     /**
      * @return object auth web
      */
     public function guardWeb()
     {
-        return \Auth::guard('web');
+        return Auth::guard('web');
     }
     /**
      * @return object auth api
      */
     public function guardApi()
     {
-        return \Auth::guard('api');
+        return Auth::guard('api');
     }
     /**
      * digunakan untuk mendapatkan data user
@@ -115,7 +115,7 @@ class Controller extends BaseController
      */
     public function hasPermissionTo($permission)
     {
-        $user = \Auth::guard()->user();
+        $user = Auth::guard()->user();
         if ($this->guard()->guest()) {
             return true;
         } elseif ($user->hasPermissionTo($permission) || $user->hasRole('superadmin')) {

@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
 Route::group(['prefix' => 'settings', 'middleware' => ['web', 'auth']], function () {
     Route::get('/system/users/permissions', [UserPermissionController::class, 'index'])->name('system.permissions');
     Route::post('/system/users/permissions', [UserPermissionController::class, 'store'])->name('system.permissions.store');
+    Route::get('/system/users/permissions/create', [UserPermissionController::class, 'create'])->name('system.permissions.create');
 });
 
 require __DIR__ . '/auth.php';

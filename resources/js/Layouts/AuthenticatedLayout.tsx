@@ -7,12 +7,12 @@ import { Navbar } from './Navbar/Navbar';
 import { Sidebar } from './Sidebar/Sidebar';
 
 interface AuthenticatedLayout {
-    processing: boolean;
+    processing?: boolean;
 }
 
 export default function AuthenticatedLayout({
     children,
-    processing,
+    processing = false,
 }: PropsWithChildren<AuthenticatedLayout>) {
     const user = usePage().props.auth.user;
 
@@ -35,7 +35,11 @@ export default function AuthenticatedLayout({
         <>
             <div className="min-h-screen">
                 <div className="relative flex min-h-screen max-w-full dark:bg-black">
-                    <Sidebar sideItems={sideItems} isOpen={isSidebarOpen} />
+                    <Sidebar
+                        sideItems={sideItems}
+                        isOpen={isSidebarOpen}
+                        href={'#'}
+                    />
                     <div className="relative flex flex-1 flex-col overflow-x-hidden">
                         <Header
                             user={user.name}

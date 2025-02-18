@@ -1,11 +1,13 @@
+import { Link } from '@inertiajs/react';
 import { LuFolderSearch } from 'react-icons/lu';
 
 interface SidebarProps {
     sideItems: string[];
     isOpen?: boolean;
+    href: string;
 }
 
-export function Sidebar({ sideItems, isOpen = true }: SidebarProps) {
+export function Sidebar({ sideItems, isOpen = true, href }: SidebarProps) {
     return (
         <aside
             className={`fixed left-0 top-0 z-10 min-h-screen w-72 transform bg-white shadow-lg transition-transform duration-300 ease-in-out dark:bg-boxdark lg:static ${
@@ -26,14 +28,14 @@ export function Sidebar({ sideItems, isOpen = true }: SidebarProps) {
                     </div>
                     <ul className="space-y-2">
                         {sideItems.map((item) => (
-                            <li key={item}>
+                            <Link href={href} key={item}>
                                 <button className="group relative flex w-full items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-black duration-300 ease-in-out hover:text-secondary">
                                     <LuFolderSearch className="hover:text-secondary" />
                                     <span className="text-sm font-medium">
                                         {item}
                                     </span>
                                 </button>
-                            </li>
+                            </Link>
                         ))}
                     </ul>
                 </nav>

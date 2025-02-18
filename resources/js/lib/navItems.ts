@@ -124,5 +124,12 @@ export const navItems: NavItem[] = [
         name: 'Settings',
         link: '/settings',
         icon: FaCog,
+        dropdownItems: [
+            {
+                name: 'Hak Akses',
+                link: '/settings/hak-akses',
+                sidebarItems: ['Hak Akses', 'User'],
+            },
+        ],
     },
 ];

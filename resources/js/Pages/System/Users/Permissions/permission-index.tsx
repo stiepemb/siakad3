@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { BsTrash } from 'react-icons/bs';
 import { GiSecurityGate } from 'react-icons/gi';
 export default function PermissionIndex() {
@@ -15,6 +15,11 @@ export default function PermissionIndex() {
         <>
             <AuthenticatedLayout>
                 <Head title="Permissions" />
+                <Link href={route('system.permissions.create')}>
+                    <button className="mb-4 rounded-md bg-blue-500 px-4 py-2 text-white">
+                        Tambah Hak Akses
+                    </button>
+                </Link>
                 <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                     <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
                         <caption className="bg-white p-5 text-left text-lg font-semibold text-gray-900 dark:bg-gray-800 dark:text-white rtl:text-right">

@@ -17,6 +17,12 @@ class UserPermissionController extends Controller
         return Inertia::render('System/Users/Permissions/permission-index');
     }
 
+    public function create()
+    {
+        $this->hasPermissionTo('SYSTEM-SETTING-PERMISSIONS_STORE');
+        return Inertia::render('System/Users/Permissions/permission-create');
+    }
+
     public function store(Request $request)
     {
         $this->hasPermissionTo('SYSTEM-SETTING-PERMISSIONS_STORE');
@@ -35,16 +41,20 @@ class UserPermissionController extends Controller
                         $fail('Nama Permission telah tersedia, mohon ganti dengan yang lain');
                     }
                 }
-            ]
+            ],
+            'group' => 'required|in:0,1',
         ], [
             'name.required' => 'Nama permission mohon untuk di isi',
+            'group.required' => 'Group permission mohon untuk di isi',
+            'group.in' => 'Group permission hanya boleh diisi dengan 0 atau 1',
         ]);
 
         $permission = new Permission;
         $now = \Carbon\Carbon::now()->format('Y-m-d H:i:s');
         $nama = strtoupper($request->input('name'));
+        $group = strtoupper($request->input('group'));
 
-        if ($request->has('group')) {
+        if ($group == 1) {
             $permission->insert([
                 ['name' => "{$nama}-GROUP", 'guard_name' => 'web', 'created_at' => $now, 'updated_at' => $now],
             ]);

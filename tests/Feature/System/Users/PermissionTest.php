@@ -37,7 +37,7 @@ class PermissionTest extends TestCase
         $response = $this->actingAs($user)->post($this->pathUrl, [
             'name' => 'TEST',
         ]);
-        
+
         $response->assertRedirect(route($this->pathUrl, absolute: false));
     }
 
@@ -48,10 +48,8 @@ class PermissionTest extends TestCase
 
         $permission = Permission::latest()->first();
 
-        $response = $this->actingAs($user)->put($this->pathUrl . '/' . $permission->id, [
-            
-        ]);
-        
+        $response = $this->actingAs($user)->put($this->pathUrl . '/' . $permission->id, []);
+
         $response->assertRedirect(route($this->pathUrl, absolute: false));
     }
 }

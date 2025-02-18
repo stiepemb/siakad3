@@ -1,9 +1,8 @@
-import Checkbox from '@/Components/Checkbox';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
+import Banner from '@/Components/Form/Banner';
+import InputField from '@/Components/Form/InputField';
+import Loader from '@/Components/Form/Loader';
+import SelectField from '@/Components/Form/SelectField';
+import SubmitButton from '@/Components/Form/SubmitButton';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 
@@ -17,7 +16,7 @@ export default function Login({
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
-        remember: false as boolean,
+        role: '',
     });
 
     const submit: FormEventHandler = (e) => {
@@ -28,83 +27,102 @@ export default function Login({
         });
     };
 
-    return (
-        <GuestLayout>
-            <Head title="Log in" />
+    const options = [
+        {
+            label: 'Super Admin',
+            value: 'superadmin',
+        },
+        {
+            label: 'Admin',
+            value: 'admin',
+        },
+        {
+            label: 'Dosen',
+            value: 'dosen',
+        },
+        {
+            label: 'Mahasiswa',
+            value: 'mahasiswa',
+        },
+    ];
 
+    return (
+        <>
+            <Head>
+                <title>Login</title>
+                <meta
+                    name="description"
+                    content="
+            Ini adalah halaman login dari website Sistem Skripsi dan Kerja Praktek (SKKP) dari Sekolah Tinggi Teknologi Indonesia Tanjung Pinang (STTI Tanjung Pinang)
+            "
+                />
+            </Head>
             {status && (
                 <div className="mb-4 text-sm font-medium text-green-600">
                     {status}
                 </div>
             )}
-
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
-
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4 block">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) =>
-                                setData(
-                                    'remember',
-                                    (e.target.checked || false) as false,
-                                )
-                            }
+            <div className="relative flex h-screen bg-gray-100 dark:bg-gray-900">
+                <Banner />
+                <div className="sm:20 w-full p-8 md:p-52 lg:w-1/2 lg:p-36">
+                    <h1 className="mb-4 text-2xl font-semibold text-primary dark:text-white">
+                        Login
+                    </h1>
+                    <form onSubmit={submit}>
+                        <InputField
+                            id="email"
+                            inputType="email"
+                            label="Email"
+                            name="email"
+                            value={data.email}
+                            onChange={(e) => setData('email', e.target.value)}
+                            errors={errors.email}
                         />
-                        <span className="ms-2 text-sm text-gray-600 dark:text-gray-400">
-                            Remember me
-                        </span>
-                    </label>
-                </div>
+                        <InputField
+                            id="password"
+                            inputType="password"
+                            label="Password"
+                            name="password"
+                            value={data.password}
+                            onChange={(e) =>
+                                setData('password', e.target.value)
+                            }
+                            errors={errors.password}
+                        />
 
-                <div className="mt-4 flex items-center justify-end">
-                    {canResetPassword && (
+                        <SelectField
+                            id="role"
+                            label="Login sebagai"
+                            name="role"
+                            value={data.role}
+                            onChange={(e) => setData('role', e.target.value)}
+                            options={options}
+                        />
+
+                        <div className="mb-6 mt-2 text-primary dark:text-white">
+                            {canResetPassword && (
+                                <Link
+                                    href={route('password.request')}
+                                    className="hover:underline dark:text-white"
+                                >
+                                    Lupa password?
+                                </Link>
+                            )}
+                        </div>
+
+                        <SubmitButton title="Login" disabled={processing} />
+                    </form>
+                    <div className="mt-6 text-center text-primary dark:text-white">
                         <Link
-                            href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
+                            href={route('register')}
+                            className="hover:underline dark:text-white"
                         >
-                            Forgot your password?
+                            Belum punya akun? Daftar disini
                         </Link>
-                    )}
-
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
+                    </div>
                 </div>
-            </form>
-        </GuestLayout>
+                <Loader processing={processing} />
+            </div>
+        </>
     );
 }

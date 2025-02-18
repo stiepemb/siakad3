@@ -20,9 +20,9 @@ const DropdownUser = () => {
                 className="flex items-center gap-4"
                 href="#"
             >
-                <div className="h-8 w-8 overflow-hidden rounded-full sm:h-13 sm:w-13">
+                <div className="h-8 w-8 overflow-hidden rounded-full sm:h-8 sm:w-8">
                     <img
-                        src={'https://placehold.co/600x400'}
+                        src={'https://placehold.co/200x200'}
                         alt="User"
                         className="h-full w-full object-cover"
                     />

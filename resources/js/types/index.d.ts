@@ -1,10 +1,12 @@
 import { Config } from 'ziggy-js';
 
 export interface User {
+    level_id: number;
     id: number;
     name: string;
     email: string;
     email_verified_at?: string;
+    avatar?: File | string | undefined;
 }
 
 export type PageProps<

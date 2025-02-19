@@ -7,7 +7,7 @@ use Tests\TestCase;
 
 use App\Models\User;
 use Spatie\Permission\Models\Permission;
-
+use Spatie\Activitylog\Models\Activity;
 class PermissionTest extends TestCase
 {
     use RefreshDatabase;
@@ -52,5 +52,24 @@ class PermissionTest extends TestCase
         $response = $this->actingAs($user)->put($this->pathUrl . '/' . $permission->id, []);
 
         $response->assertRedirect(route('system.permissions', absolute: false));
+    }
+
+    public function test_user_insert_new_permission_is_logged()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('superadmin');
+
+        $response = $this->actingAs($user)->post($this->pathUrl, [
+            'name' => 'URTES',
+            'group' => 0,
+        ]);
+        
+        $user_login_latest = Activity::where('causer_type', 'App\Models\User')
+        ->where('causer_id', $user->id)
+        ->where('event', 'delete-permission')
+        ->latest('created_at')
+        ->first();
+
+        $this->assertNotNull($user_login_latest);
     }
 }

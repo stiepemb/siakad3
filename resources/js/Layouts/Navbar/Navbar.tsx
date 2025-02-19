@@ -4,11 +4,9 @@ import { MdKeyboardArrowDown } from 'react-icons/md';
 
 interface NavItem {
     name: string;
-    link: string;
     icon?: IconType;
     dropdownItems?: Array<{
         name: string;
-        link: string;
     }>;
 }
 

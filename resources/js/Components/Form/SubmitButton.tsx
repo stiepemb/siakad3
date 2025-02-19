@@ -18,7 +18,7 @@ export default function SubmitButton({
             <button
                 type="submit"
                 disabled={disabled}
-                className={`${width} mt-4 rounded-xl ${buttonColor} px-4 py-4 font-semibold text-white duration-300 hover:bg-opacity-90 focus:outline-none focus:ring-4 ${focusRingColor} focus:ring-opacity-50`}
+                className={`${width} mt-4 rounded-md ${buttonColor} p-2 font-semibold text-white duration-300 hover:bg-opacity-90 focus:outline-none focus:ring-4 ${focusRingColor} focus:ring-opacity-50`}
             >
                 {title}
             </button>

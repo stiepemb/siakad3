@@ -42,7 +42,7 @@ export default function InputField({
                     id={id}
                     name={name}
                     placeholder={placeholder}
-                    className="mt-1 w-full rounded-lg border border-gray-300 p-2 duration-500 focus:border-primary focus:border-opacity-50 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    className="mt-1 w-full rounded-md border border-gray-300 p-2 duration-500 focus:border-primary focus:border-opacity-50 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                     autoComplete="off"
                     value={value}
                     onChange={onChange}

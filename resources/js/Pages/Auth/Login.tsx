@@ -1,7 +1,6 @@
 import Banner from '@/Components/Form/Banner';
 import InputField from '@/Components/Form/InputField';
 import Loader from '@/Components/Form/Loader';
-import SelectField from '@/Components/Form/SelectField';
 import SubmitButton from '@/Components/Form/SubmitButton';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
@@ -16,7 +15,6 @@ export default function Login({
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
-        role: '',
     });
 
     const submit: FormEventHandler = (e) => {
@@ -26,25 +24,6 @@ export default function Login({
             onFinish: () => reset('password'),
         });
     };
-
-    const options = [
-        {
-            label: 'Super Admin',
-            value: 'superadmin',
-        },
-        {
-            label: 'Admin',
-            value: 'admin',
-        },
-        {
-            label: 'Dosen',
-            value: 'dosen',
-        },
-        {
-            label: 'Mahasiswa',
-            value: 'mahasiswa',
-        },
-    ];
 
     return (
         <>
@@ -88,15 +67,6 @@ export default function Login({
                                 setData('password', e.target.value)
                             }
                             errors={errors.password}
-                        />
-
-                        <SelectField
-                            id="role"
-                            label="Login sebagai"
-                            name="role"
-                            value={data.role}
-                            onChange={(e) => setData('role', e.target.value)}
-                            options={options}
                         />
 
                         <div className="mb-6 mt-2 text-primary dark:text-white">

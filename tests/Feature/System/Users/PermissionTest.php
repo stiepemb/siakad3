@@ -20,6 +20,10 @@ class PermissionTest extends TestCase
      */
     protected $seed = true;
 
+    /**
+     * Functional Requirement: FR-001
+     * Document Name: srs_permission.docx    
+    */
     public function test_user_superadmin_can_access_permission_page()
     {
         $user = User::factory()->create();
@@ -29,19 +33,65 @@ class PermissionTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_user_superadmin_can_create_permission()
+    /**
+     * Functional Requirement: FR-001
+     * Document Name: srs_permission.docx    
+    */
+    public function test_user_superadmin_can_access_create_permission_page()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('superadmin');
+
+        $response = $this->actingAs($user)->get($this->pathUrl . '/create');
+        $response->assertStatus(200);
+    }
+
+    /**
+     * Functional Requirement: FR-001
+     * Document Name: srs_permission.docx    
+    */
+    public function test_user_superadmin_can_store_new_permission()
     {
         $user = User::factory()->create();
         $user->assignRole('superadmin');
 
         $response = $this->actingAs($user)->post($this->pathUrl, [
-            'name' => 'URTES',
+            'name' => 'TEST_PERMISSION',
             'group' => 0,
         ]);
 
         $response->assertRedirect(route('system.permissions', absolute: false));
+
+        $permission = Permission::latest()->first();
+
+        return $permission;
     }
 
+    /**
+     * Functional Requirement: FR-001
+     * Document Name: srs_permission.docx    
+    */
+    public function test_user_superadmin_can_store_new_group_permission()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('superadmin');
+
+        $response = $this->actingAs($user)->post($this->pathUrl, [
+            'name' => 'TEST',
+            'group' => 1,
+        ]);
+
+        $response->assertRedirect(route('system.permissions', absolute: false));
+
+        $permission = Permission::latest()->first();
+
+        return $user;
+    }
+
+    /**
+     * Functional Requirement: FR-002
+     * Document Name: srs_permission.docx    
+    */
     public function test_user_superadmin_can_delete_permission()
     {
         $user = User::factory()->create();
@@ -52,23 +102,42 @@ class PermissionTest extends TestCase
         $response = $this->actingAs($user)->put($this->pathUrl . '/' . $permission->id, []);
 
         $response->assertRedirect(route('system.permissions', absolute: false));
+
+        return $permission;
     }
 
-    public function test_user_insert_new_permission_is_logged()
+    /**
+     * Functional Requirement: FR-004
+     * Document Name: srs_permission.docx    
+     * 
+     * @depends test_user_superadmin_can_store_new_permission
+    */
+    public function test_user_insert_new_permission_is_logged(User $user)
     {
-        $user = User::factory()->create();
-        $user->assignRole('superadmin');
-
-        $response = $this->actingAs($user)->post($this->pathUrl, [
-            'name' => 'URTES',
-            'group' => 0,
-        ]);
-        
         $user_login_latest = Activity::where('causer_type', 'App\Models\User')
         ->where('causer_id', $user->id)
-        ->where('event', 'delete-permission')
+        ->where('event', 'store-permission')
         ->latest('created_at')
         ->first();
+
+
+        $this->assertNotNull($user_login_latest);
+    }
+    
+    /**
+     * Functional Requirement: FR-004
+     * Document Name: srs_permission.docx    
+     * 
+     * @depends test_user_superadmin_can_store_new_permission
+    */
+    public function test_user_destroy_permission_is_logged(User $user)
+    {
+        $user_login_latest = Activity::where('causer_type', 'App\Models\User')
+        ->where('causer_id', $user->id)
+        ->where('event', 'destroy-permission')
+        ->latest('created_at')
+        ->first();
+
 
         $this->assertNotNull($user_login_latest);
     }

@@ -12,7 +12,7 @@ class PermissionTest extends TestCase
 {
     use RefreshDatabase;
 
-    private $pathUrl = '/settings/system/users/permissions';
+    private $routeName = 'system.permissions';
     /**
      * Indicates whether the default seeder should run before each test.
      *
@@ -21,28 +21,28 @@ class PermissionTest extends TestCase
     protected $seed = true;
 
     /**
-     * Functional Requirement: FR-001
-     * Document Name: srs_permission.docx    
+     * [Functional Requirement: FR-001]
+     * [Document Name: srs_permission.docx]    
     */
     public function test_user_superadmin_can_access_permission_page()
     {
         $user = User::factory()->create();
         $user->assignRole('superadmin');
 
-        $response = $this->actingAs($user)->get($this->pathUrl);
+        $response = $this->actingAs($user)->get(route("{$this->routeName}.index"));
         $response->assertStatus(200);
     }
 
     /**
-     * Functional Requirement: FR-001
-     * Document Name: srs_permission.docx    
+     * [Functional Requirement: FR-001]
+     * [Document Name: srs_permission.docx]    
     */
     public function test_user_superadmin_can_access_create_permission_page()
     {
         $user = User::factory()->create();
         $user->assignRole('superadmin');
 
-        $response = $this->actingAs($user)->get($this->pathUrl . '/create');
+        $response = $this->actingAs($user)->get(route("{$this->routeName}.create"));
         $response->assertStatus(200);
     }
 
@@ -55,33 +55,12 @@ class PermissionTest extends TestCase
         $user = User::factory()->create();
         $user->assignRole('superadmin');
 
-        $response = $this->actingAs($user)->post($this->pathUrl, [
+        $response = $this->actingAs($user)->post(route("{$this->routeName}.store"), [
             'name' => 'TEST_PERMISSION',
             'group' => 0,
         ]);
 
-        $response->assertRedirect(route('system.permissions', absolute: false));
-
-        $permission = Permission::latest()->first();
-
-        return $permission;
-    }
-
-    /**
-     * Functional Requirement: FR-001
-     * Document Name: srs_permission.docx    
-    */
-    public function test_user_superadmin_can_store_new_group_permission()
-    {
-        $user = User::factory()->create();
-        $user->assignRole('superadmin');
-
-        $response = $this->actingAs($user)->post($this->pathUrl, [
-            'name' => 'TEST',
-            'group' => 1,
-        ]);
-
-        $response->assertRedirect(route('system.permissions', absolute: false));
+        $response->assertRedirect(route('system.permissions.index', absolute: false));
 
         $permission = Permission::latest()->first();
 
@@ -89,8 +68,27 @@ class PermissionTest extends TestCase
     }
 
     /**
-     * Functional Requirement: FR-002
-     * Document Name: srs_permission.docx    
+     * [Functional Requirement: FR-001]
+     * [Document Name: srs_permission.docx]    
+    */
+    public function test_user_superadmin_can_store_new_group_permission()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('superadmin');
+
+        $response = $this->actingAs($user)->post(route("{$this->routeName}.store"), [
+            'name' => 'TEST',
+            'group' => 1,
+        ]);
+
+        $response->assertRedirect(route("{$this->routeName}.index", absolute: false));
+
+        return $user;
+    }
+
+    /**
+     * [Functional Requirement: FR-002]
+     * [Document Name: srs_permission.docx]    
     */
     public function test_user_superadmin_can_delete_permission()
     {
@@ -99,16 +97,18 @@ class PermissionTest extends TestCase
 
         $permission = Permission::latest()->first();
 
-        $response = $this->actingAs($user)->put($this->pathUrl . '/' . $permission->id, []);
+        $response = $this->actingAs($user)
+        ->from(route("{$this->routeName}.index", absolute: false))
+        ->delete(route("{$this->routeName}.destroy", ['id' => $permission->id]), []);
 
-        $response->assertRedirect(route('system.permissions', absolute: false));
+        $response->assertRedirect(route("{$this->routeName}.index", absolute: false));
 
-        return $permission;
+        return $user;
     }
 
     /**
-     * Functional Requirement: FR-004
-     * Document Name: srs_permission.docx    
+     * [Functional Requirement: FR-004]
+     * [Document Name: srs_permission.docx] 
      * 
      * @depends test_user_superadmin_can_store_new_permission
     */
@@ -125,8 +125,8 @@ class PermissionTest extends TestCase
     }
     
     /**
-     * Functional Requirement: FR-004
-     * Document Name: srs_permission.docx    
+     * [Functional Requirement: FR-004]
+     * [Document Name: srs_permission.docx]
      * 
      * @depends test_user_superadmin_can_store_new_permission
     */

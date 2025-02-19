@@ -10,7 +10,7 @@ interface SidebarProps {
 export function Sidebar({ sideItems, isOpen = true, href }: SidebarProps) {
     return (
         <aside
-            className={`fixed left-0 top-0 z-10 min-h-screen w-72 transform bg-white shadow-lg transition-transform duration-300 ease-in-out dark:bg-boxdark lg:static ${
+            className={`fixed left-0 top-0 z-10 min-h-screen w-72 transform border-r bg-white shadow-lg transition-transform duration-300 ease-in-out dark:bg-boxdark lg:static ${
                 isOpen ? 'translate-x-0' : '-translate-x-full'
             }`}
         >

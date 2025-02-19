@@ -2,6 +2,7 @@ import Loader from '@/Components/Loader';
 import { navItems } from '@/lib/navItems';
 import { usePage } from '@inertiajs/react';
 import { PropsWithChildren, useState } from 'react';
+import { ToastContainer } from 'react-toastify';
 import Header from './Header/Header';
 import { Navbar } from './Navbar/Navbar';
 import { Sidebar } from './Sidebar/Sidebar';
@@ -33,6 +34,7 @@ export default function AuthenticatedLayout({
 
     return (
         <>
+            <ToastContainer />
             <div className="min-h-screen">
                 <div className="relative flex min-h-screen max-w-full dark:bg-black">
                     <Sidebar

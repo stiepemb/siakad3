@@ -1,4 +1,5 @@
 import Loader from '@/Components/Loader';
+import BreadCrumb from '@/Components/Table/BreadCrumb';
 import { navItems } from '@/lib/navItems';
 import { usePage } from '@inertiajs/react';
 import { PropsWithChildren, useEffect, useState } from 'react';
@@ -24,15 +25,21 @@ export default function AuthenticatedLayout({
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
     const findSidebarItemsByPath = () => {
+        const normalizedPath = currentPath.replace('/create', '');
         for (const navItem of navItems) {
             if (navItem.dropdownItems) {
                 for (const dropdownItem of navItem.dropdownItems) {
                     if (dropdownItem.sidebarItems) {
                         const matchingSidebarItem =
                             dropdownItem.sidebarItems.find((item) => {
-                                const itemUrl = new URL(item.route);
+                                const itemUrl = new URL(
+                                    item.route,
+                                    window.location.origin,
+                                );
 
-                                return itemUrl.pathname === currentPath;
+                                return normalizedPath.startsWith(
+                                    itemUrl.pathname,
+                                );
                             });
                         if (matchingSidebarItem) {
                             return dropdownItem.sidebarItems;
@@ -78,6 +85,7 @@ export default function AuthenticatedLayout({
                             onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)}
                         />
                         <main className="dark:bg-black">
+                            <BreadCrumb />
                             <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
                                 {children}
                             </div>

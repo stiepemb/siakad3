@@ -163,7 +163,7 @@ export default function PermissionIndex({
 
     return (
         <AuthenticatedLayout>
-            <Head title="Permissions" />
+            <Head title="Hak Akses" />
             <Dialog
                 open={isOpen}
                 onClose={() => setIsOpen(false)}

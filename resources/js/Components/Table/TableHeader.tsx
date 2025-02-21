@@ -18,8 +18,8 @@ export default function TableHeader({
     showSearch = true,
 }: TableHeader) {
     return (
-        <div className={`flex items-center gap-4 ${justify}`}>
-            <div className="flex items-center gap-2">{children}</div>
+        <div className={`flex items-center ${justify}`}>
+            <div className="flex items-center">{children}</div>
 
             {showSearch && (
                 <SearchField

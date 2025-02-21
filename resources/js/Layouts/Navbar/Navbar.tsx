@@ -1,105 +1,85 @@
-import { useEffect, useRef, useState } from 'react';
-import { IconType } from 'react-icons';
-import { MdKeyboardArrowDown } from 'react-icons/md';
+import {
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuItems,
+    Transition,
+} from '@headlessui/react';
+import React, { Fragment } from 'react';
+import { HiChevronDown } from 'react-icons/hi';
 
-interface NavItem {
-    name: string;
-    icon?: IconType;
-    dropdownItems?: Array<{
-        name: string;
-    }>;
-}
-
-interface NavbarProps {
-    navItems: NavItem[];
-    onNavItemClick: (itemName: string, dropdownName?: string) => void;
-    onMenuClick: () => void;
-}
-
-export const Navbar = ({ navItems, onNavItemClick }: NavbarProps) => {
-    const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-    const dropdownRef = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                dropdownRef.current &&
-                !dropdownRef.current.contains(event.target as Node)
-            ) {
-                setActiveDropdown(null);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-
-    const handleDropdownClick = (itemName: string) => {
-        setActiveDropdown(activeDropdown === itemName ? null : itemName);
-    };
-
-    const handleDropdownItemClick = (
-        navItemName: string,
-        dropdownItemName: string,
-    ) => {
-        setActiveDropdown(null);
-        onNavItemClick(navItemName, dropdownItemName);
-    };
-
+export default function Navbar({ navItems, activeMenu, handleDropdownClick }) {
     return (
-        <nav className="sticky top-0 z-30 flex justify-evenly bg-white py-6 shadow dark:bg-gray-800">
-            <div className="px-4">
-                <div className="flex items-center justify-between">
-                    <div className="flex space-x-4" ref={dropdownRef}>
-                        {navItems.map((item) => (
-                            <div key={item.name} className="relative">
-                                <button
-                                    onClick={() =>
-                                        handleDropdownClick(item.name)
-                                    }
-                                    className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-secondary dark:text-gray-200"
+        <nav className="h-16 w-full bg-white/90 p-4 text-sm text-meta-4 shadow-md backdrop-blur-md dark:text-white">
+            <div className="flex h-full items-center justify-evenly">
+                <div className="relative flex space-x-4">
+                    {navItems.map((item) => {
+                        const isActive = activeMenu === item.name;
+
+                        return (
+                            <Menu
+                                as="div"
+                                key={item.name}
+                                className="relative inline-block text-nowrap"
+                            >
+                                <MenuButton
+                                    className={`flex items-center gap-2 rounded-md px-4 py-2 ${
+                                        isActive
+                                            ? 'bg-blue-500 text-white'
+                                            : 'hover:bg-gray-200'
+                                    }`}
                                 >
-                                    {item.icon && (
-                                        <item.icon className="mr-2 h-4 w-4" />
-                                    )}
+                                    {item.icons &&
+                                        React.cloneElement(item.icons, {
+                                            className: 'h-5 w-5',
+                                        })}
                                     {item.name}
-                                    {item.dropdownItems && (
-                                        <MdKeyboardArrowDown
-                                            className={`ml-1 h-4 w-4 transition-transform duration-300 ${
-                                                activeDropdown === item.name
-                                                    ? 'rotate-180'
-                                                    : ''
-                                            }`}
-                                        />
-                                    )}
-                                </button>
-                                {item.dropdownItems &&
-                                    activeDropdown === item.name && (
-                                        <div className="absolute left-0 mt-2 w-48 rounded-md bg-white py-2 shadow-lg transition-all duration-300 ease-in-out dark:bg-gray-700">
-                                            {item.dropdownItems.map(
-                                                (dropdownItem) => (
-                                                    <button
-                                                        key={dropdownItem.name}
-                                                        onClick={() =>
-                                                            handleDropdownItemClick(
-                                                                item.name,
-                                                                dropdownItem.name,
-                                                            )
-                                                        }
-                                                        className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-primary dark:text-gray-200"
+                                    <HiChevronDown className="h-5 w-5 transition-transform duration-300" />
+                                </MenuButton>
+
+                                <Transition
+                                    as={Fragment}
+                                    enter="transition ease-out duration-300"
+                                    enterFrom="opacity-0 translate-y-2 scale-95"
+                                    enterTo="opacity-100 translate-y-0 scale-100"
+                                    leave="transition ease-in duration-200"
+                                    leaveFrom="opacity-100 translate-y-0 scale-100"
+                                    leaveTo="opacity-0 translate-y-2 scale-95"
+                                >
+                                    <MenuItems className="absolute left-0 mt-2 w-40 origin-top-left rounded-md bg-white shadow-lg transition-all duration-200">
+                                        <div className="py-2">
+                                            {item.dropDownItems.map(
+                                                (dropDown) => (
+                                                    <MenuItem
+                                                        key={dropDown.name}
                                                     >
-                                                        {dropdownItem.name}
-                                                    </button>
+                                                        {({ active }) => (
+                                                            <button
+                                                                className={`block w-full rounded-md px-4 py-2 text-left transition-colors ${
+                                                                    active
+                                                                        ? 'bg-gray-100 text-secondary'
+                                                                        : 'text-black'
+                                                                }`}
+                                                                onClick={() =>
+                                                                    handleDropdownClick(
+                                                                        dropDown.name,
+                                                                    )
+                                                                }
+                                                            >
+                                                                {dropDown.name}
+                                                            </button>
+                                                        )}
+                                                    </MenuItem>
                                                 ),
                                             )}
                                         </div>
-                                    )}
-                            </div>
-                        ))}
-                    </div>
+                                    </MenuItems>
+                                </Transition>
+                            </Menu>
+                        );
+                    })}
                 </div>
             </div>
         </nav>
     );
-};
+}

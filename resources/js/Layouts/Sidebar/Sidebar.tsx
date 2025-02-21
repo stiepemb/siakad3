@@ -1,6 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { LuFolderSearch } from 'react-icons/lu';
-
+import { FaUniversity } from 'react-icons/fa';
 interface SidebarItem {
     name: string;
     route: string;
@@ -8,39 +7,42 @@ interface SidebarItem {
 
 interface SidebarProps {
     sideItems: SidebarItem[];
-    isOpen?: boolean;
 }
 
-export function Sidebar({ sideItems, isOpen = true }: SidebarProps) {
+export default function Sidebar({ sideItems }: SidebarProps) {
     return (
-        <aside
-            className={`fixed left-0 top-0 z-10 min-h-screen w-72 transform border-r bg-white shadow-lg transition-transform duration-300 ease-in-out dark:bg-boxdark lg:static ${
-                isOpen ? 'translate-x-0' : '-translate-x-full'
-            }`}
-        >
-            <div className="flex h-full flex-col overflow-y-auto duration-300 ease-linear">
-                <nav className="px-4 py-4 lg:px-6">
-                    <div className="mb-6 lg:mb-10">
-                        <img
-                            src="/images/logo-stie.png"
-                            alt="Logo"
-                            className="m-auto h-28 w-28"
-                        />
-                        <p className="my-2 text-center text-lg font-bold text-black">
-                            SIAKAD v3
-                        </p>
+        <aside className="bg-whitedark:border-gray-800 w-72 overflow-y-auto border-r border-gray-100 bg-white dark:bg-boxdark">
+            <div className="flex h-full flex-col">
+                {/* Header Sidebar */}
+                <div className="flex items-center justify-between px-4 py-6">
+                    <div className="flex items-center gap-2">
+                        <FaUniversity className="h-8 w-8" />
+                        <h1 className="text-xl font-bold">SIAKAD v3</h1>
                     </div>
-                    <ul className="space-y-2">
-                        {sideItems.map((item) => (
-                            <Link href={item.route} key={item.name}>
-                                <button className="group relative flex w-full items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-black duration-300 ease-in-out hover:text-secondary">
-                                    <LuFolderSearch className="hover:text-secondary" />
-                                    <span className="text-sm font-medium">
-                                        {item.name}
-                                    </span>
-                                </button>
-                            </Link>
-                        ))}
+                </div>
+
+                {/* Sidebar Navigation */}
+                <nav className="flex-1 overflow-y-auto px-4 py-6">
+                    <ul className="space-y-3">
+                        {sideItems.map((item) => {
+                            const isActive = location.pathname.startsWith(
+                                item.route,
+                            );
+                            return (
+                                <li key={item.name}>
+                                    <Link
+                                        href={item.route}
+                                        className={`group flex items-center rounded-xl p-3 text-sm font-medium transition-all duration-200 ${
+                                            isActive
+                                                ? 'bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400'
+                                                : 'text-gray-700 hover:bg-gray-100/80 dark:text-gray-300 dark:hover:bg-gray-800/50'
+                                        }`}
+                                    >
+                                        <span>{item.name}</span>
+                                    </Link>
+                                </li>
+                            );
+                        })}
                     </ul>
                 </nav>
             </div>

@@ -55,16 +55,14 @@ class PermissionTest extends TestCase
         $user = User::factory()->create();
         $user->assignRole('superadmin');
 
-        $response = $this->actingAs($user)->post(route("{$this->routeName}.store"), [
+        $response = $this->actingAs($user)
+        ->from(route("{$this->routeName}.index", absolute: false))
+        ->post(route("{$this->routeName}.store"), [
             'name' => 'TEST_PERMISSION',
             'group' => 0,
         ]);
 
         $response->assertRedirect(route('system.permissions.index', absolute: false));
-
-        $permission = Permission::latest()->first();
-
-        return $user;
     }
 
     /**
@@ -76,14 +74,14 @@ class PermissionTest extends TestCase
         $user = User::factory()->create();
         $user->assignRole('superadmin');
 
-        $response = $this->actingAs($user)->post(route("{$this->routeName}.store"), [
+        $response = $this->actingAs($user)
+        ->from(route("{$this->routeName}.index", absolute: false))
+        ->post(route("{$this->routeName}.store"), [
             'name' => 'TEST',
             'group' => 1,
         ]);
 
         $response->assertRedirect(route("{$this->routeName}.index", absolute: false));
-
-        return $user;
     }
 
     /**
@@ -103,23 +101,58 @@ class PermissionTest extends TestCase
 
         $response->assertRedirect(route("{$this->routeName}.index", absolute: false));
 
-        return $user;
+    }
+
+    /**
+     * [Functional Requirement: FR-003]
+     * [Document Name: srs_permission.docx]    
+    */
+    public function test_user_non_superadmin_can_access()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('baak');
+        
+        $response = $this->actingAs($user)->get(route("{$this->routeName}.create"));
+        $response->assertStatus(403);
+
+        $response = $this->actingAs($user)->post(route("{$this->routeName}.store"), [
+            'name' => 'TEST_PERMISSION',
+            'group' => 0,
+        ]);
+        
+        $response->assertStatus(403);
+
+        $permission = Permission::latest()->first();
+
+        $response = $this->actingAs($user)
+        ->from(route("{$this->routeName}.index", absolute: false))
+        ->delete(route("{$this->routeName}.destroy", ['id' => $permission->id]), []);
+
+        $response->assertStatus(403);
     }
 
     /**
      * [Functional Requirement: FR-004]
      * [Document Name: srs_permission.docx] 
-     * 
-     * @depends test_user_superadmin_can_store_new_permission
+     *
     */
-    public function test_user_insert_new_permission_is_logged(User $user)
+    public function test_user_insert_new_permission_is_logged()
     {
+        $user = User::factory()->create();
+        $user->assignRole('superadmin');
+
+        $response = $this->actingAs($user)
+        ->from(route("{$this->routeName}.index", absolute: false))
+        ->post(route("{$this->routeName}.store"), [
+            'name' => 'TEST_PERMISSION',
+            'group' => 0,
+        ]);
+
         $user_login_latest = Activity::where('causer_type', 'App\Models\User')
         ->where('causer_id', $user->id)
         ->where('event', 'store-permission')
         ->latest('created_at')
         ->first();
-
 
         $this->assertNotNull($user_login_latest);
     }
@@ -127,11 +160,26 @@ class PermissionTest extends TestCase
     /**
      * [Functional Requirement: FR-004]
      * [Document Name: srs_permission.docx]
-     * 
-     * @depends test_user_superadmin_can_store_new_permission
+     *      
     */
-    public function test_user_destroy_permission_is_logged(User $user)
+    public function test_user_destroy_permission_is_logged()
     {
+        $user = User::factory()->create();
+        $user->assignRole('superadmin');
+        
+        $response = $this->actingAs($user)
+        ->from(route("{$this->routeName}.index", absolute: false))
+        ->post(route("{$this->routeName}.store"), [
+            'name' => 'TEST_PERMISSION',
+            'group' => 0,
+        ]);
+        
+        $permission = Permission::latest()->first();
+
+        $response = $this->actingAs($user)
+        ->from(route("{$this->routeName}.index", absolute: false))
+        ->delete(route("{$this->routeName}.destroy", ['id' => $permission->id]), []);
+        
         $user_login_latest = Activity::where('causer_type', 'App\Models\User')
         ->where('causer_id', $user->id)
         ->where('event', 'destroy-permission')
@@ -141,4 +189,5 @@ class PermissionTest extends TestCase
 
         $this->assertNotNull($user_login_latest);
     }
+
 }

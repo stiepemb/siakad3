@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Permission;
+use Spatie\Activitylog\Models\Activity;
 
 class UserPermissionController extends Controller
 {
@@ -137,6 +138,15 @@ class UserPermissionController extends Controller
                     ]);
                 }
             }
+            activity()
+                ->event('store-permission')
+                ->withProperties([
+                    'ip' => $request->ip(),
+                ])
+                ->tap(function(Activity $activity) {
+                    $activity->log_name = 'system-user';
+                })
+                ->log("Nama permission {$nama} berhasil disimpan");
 
             app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
             DB::commit();
@@ -147,7 +157,7 @@ class UserPermissionController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $this->hasPermissionTo('SYSTEM-SETTING-PERMISSIONS_DESTROY');
 
@@ -158,6 +168,16 @@ class UserPermissionController extends Controller
             DB::table('permissions')
                 ->where('name', $permission->name)
                 ->delete();
+            
+            activity()
+                ->event('destroy-permission')
+                ->withProperties([
+                    'ip' => $request->ip(),
+                ])
+                ->tap(function(Activity $activity) {
+                    $activity->log_name = 'system-user';
+                })
+                ->log("Nama permission {$permission->name} berhasil dihapus");
 
             app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
             return redirect()->back()->with('success', 'Permission berhasil dihapus');

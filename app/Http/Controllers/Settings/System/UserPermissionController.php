@@ -66,31 +66,32 @@ class UserPermissionController extends Controller
     public function store(Request $request)
     {
         $this->hasPermissionTo('SYSTEM-SETTING-PERMISSIONS_STORE');
-        try {
-            $validated = $request->validate([
-                'name' => [
-                    'required',
-                    'string',
-                    'max:255',
-                    function ($attribute, $value, $fail) use ($request) {
-                        if ($request->has('group')) {
-                            $value = $value . '-GROUP';
-                        }
-                        $exist = Permission::where('name', 'like', "%$value%")
-                            ->where('guard_name', 'web')
-                            ->exists();
-
-                        if ($exist) {
-                            $fail('Nama Permission telah tersedia, mohon ganti dengan yang lain');
-                        }
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->has('group')) {
+                        $value = $value . '-GROUP';
                     }
-                ],
-                'group' => 'required|in:0,1',
-            ], [
-                'name.required' => 'Nama permission mohon untuk di isi',
-                'group.required' => 'Group permission mohon untuk di isi',
-                'group.in' => 'Group permission hanya boleh diisi dengan 0 atau 1',
-            ]);
+                    $exist = Permission::where('name', 'like', "%$value%")
+                        ->where('guard_name', 'web')
+                        ->exists();
+
+                    if ($exist) {
+                        $fail('Nama Permission telah tersedia, mohon ganti dengan yang lain');
+                    }
+                }
+            ],
+            'group' => 'required|in:0,1',
+        ], [
+            'name.required' => 'Nama permission mohon untuk di isi',
+            'group.required' => 'Group permission mohon untuk di isi',
+            'group.in' => 'Group permission hanya boleh diisi dengan 0 atau 1',
+        ]);
+        try {
+
 
             DB::beginTransaction();
 

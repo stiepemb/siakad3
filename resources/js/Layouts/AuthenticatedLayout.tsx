@@ -1,12 +1,12 @@
 import Loader from '@/Components/Loader';
 import BreadCrumb from '@/Components/Table/BreadCrumb';
 import { navItems } from '@/lib/navItems';
+import { useAppStore } from '@/Store/useAppStore';
 import { usePage } from '@inertiajs/react';
-import { PropsWithChildren, useEffect, useState } from 'react';
+import { PropsWithChildren, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 import Header from './Header/Header';
-import { Navbar } from './Navbar/Navbar';
-import { Sidebar } from './Sidebar/Sidebar';
+import Sidebar from './Sidebar/Sidebar';
 
 interface AuthenticatedLayout {
     processing?: boolean;
@@ -17,83 +17,76 @@ export default function AuthenticatedLayout({
     processing = false,
 }: PropsWithChildren<AuthenticatedLayout>) {
     const user = usePage().props.auth.user;
-    const currentPath = usePage().url;
+    const { sideItems, setSideItems, activeMenu, setActiveMenu } =
+        useAppStore();
 
-    const [sideItems, setSideItems] = useState<
-        Array<{ name: string; route: string }>
-    >([]);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-    const findSidebarItemsByPath = () => {
-        const normalizedPath = currentPath.replace('/create', '');
-        for (const navItem of navItems) {
-            if (navItem.dropdownItems) {
-                for (const dropdownItem of navItem.dropdownItems) {
-                    if (dropdownItem.sidebarItems) {
-                        const matchingSidebarItem =
-                            dropdownItem.sidebarItems.find((item) => {
-                                const itemUrl = new URL(
-                                    item.route,
-                                    window.location.origin,
-                                );
-
-                                return normalizedPath.startsWith(
-                                    itemUrl.pathname,
-                                );
-                            });
-                        if (matchingSidebarItem) {
-                            return dropdownItem.sidebarItems;
-                        }
-                    }
-                }
-            }
-        }
-        return [];
-    };
+    const location = usePage().url;
 
     useEffect(() => {
-        setSideItems(findSidebarItemsByPath());
-    }, [currentPath]);
+        if (sideItems.length === 0) {
+            const defaultNav = navItems[0];
+            const defaultDropDown = defaultNav.dropDownItems[0];
+            const defaultSidebar = defaultDropDown.sidebarItems;
 
-    const handleNavItemClick = (itemName: string, dropdownName?: string) => {
-        if (dropdownName) {
-            const navItem = navItems.find((item) => item.name === itemName);
-            const dropdownItem = navItem?.dropdownItems?.find(
-                (item) => item.name === dropdownName,
+            setSideItems([...defaultSidebar]);
+            setActiveMenu(defaultDropDown.name);
+        }
+    }, [sideItems, setSideItems, setActiveMenu]);
+
+    useEffect(() => {
+        const foundMenu = navItems
+            .flatMap((item) => item.dropDownItems)
+            .find((dropdown) =>
+                dropdown.sidebarItems.some((s) => location.startsWith(s.route)),
             );
-            setSideItems(dropdownItem?.sidebarItems || []);
-        } else {
-            setSideItems([]);
+
+        if (foundMenu) {
+            setSideItems(foundMenu.sidebarItems);
+            setActiveMenu(foundMenu.name);
+        }
+    }, [location, setSideItems, setActiveMenu]);
+
+    const handleDropdownClick = (dropDownName: string) => {
+        const foundDropDown = navItems
+            .flatMap((item) => item.dropDownItems)
+            .find((item) => item.name === dropDownName);
+
+        if (foundDropDown) {
+            setSideItems([...foundDropDown.sidebarItems]);
+            setActiveMenu(dropDownName);
         }
     };
+
+    const pathnames = location.split('/').filter((x) => x);
 
     return (
         <>
             <ToastContainer />
-            <div className="min-h-screen">
-                <div className="relative flex min-h-screen max-w-full dark:bg-black">
-                    <Sidebar sideItems={sideItems} isOpen={isSidebarOpen} />
-                    <div className="relative flex flex-1 flex-col overflow-x-hidden">
+            <div className="flex h-screen">
+                <div className="flex h-screen w-full dark:bg-black">
+                    <div className="flex flex-1 flex-col overflow-x-hidden">
                         <Header
                             user={user.name}
-                            userRole={'Mahasiswa'}
-                            avatar={''}
-                        />
-                        <Navbar
+                            userRole="Mahasiswa"
+                            avatar=""
                             navItems={navItems}
-                            onNavItemClick={handleNavItemClick}
-                            onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                            activeMenu={activeMenu}
+                            handleDropdownClick={handleDropdownClick}
                         />
-                        <main className="dark:bg-black">
-                            <BreadCrumb />
-                            <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
-                                {children}
+                        <main className="flex flex-1 dark:bg-black">
+                            <Sidebar sideItems={sideItems} />
+
+                            <div className="flex flex-1 flex-col overflow-y-auto">
+                                <div className="mx-auto w-full max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+                                    <BreadCrumb pathnames={pathnames} />
+                                    {children}
+                                </div>
                             </div>
                         </main>
                     </div>
                 </div>
-                <Loader processing={processing} />
             </div>
+            <Loader processing={processing} />
         </>
     );
 }

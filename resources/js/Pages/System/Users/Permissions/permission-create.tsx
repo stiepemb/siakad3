@@ -13,35 +13,30 @@ export default function PermissionCreate() {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        try {
-            post(route('system.permissions.store'), {
-                onSuccess: () => {
-                    console.log('Success triggered');
-                    toast.success(`Nama permission berhasil disimpan`, {
-                        position: 'top-right',
-                        autoClose: 2000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                    });
-                },
-                onError: (errors) => {
-                    throw new Error(errors.message);
-                },
-            });
-        } catch (error) {
-            console.log('Error triggered', error);
-            toast.error(`Gagal menyimpan permission ${data.name}`, {
-                position: 'top-right',
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                theme: 'light',
-            });
-        }
+        post(route('system.permissions.store'), {
+            onSuccess: () => {
+                console.log('Success triggered');
+                toast.success(`Nama permission berhasil disimpan`, {
+                    position: 'top-right',
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            },
+            onError: (errors) => {
+                console.log('Error triggered', errors);
+                toast.error(`Gagal menyimpan permission ${data.name}`, {
+                    position: 'top-right',
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            },
+        });
     };
 
     return (

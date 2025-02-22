@@ -27,3 +27,5 @@ phpunit.xml
 yarn.lock
 composer.lock
 bun.lock
+package-lock.json
+siakad3.code-workspace

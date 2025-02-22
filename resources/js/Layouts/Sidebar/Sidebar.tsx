@@ -11,7 +11,7 @@ interface SidebarProps {
 
 export default function Sidebar({ sideItems }: SidebarProps) {
     return (
-        <aside className="bg-whitedark:border-gray-800 w-72 overflow-y-auto border-r border-gray-100 bg-white dark:bg-boxdark">
+        <aside className="z-60 sticky top-0 w-72 overflow-y-auto border-r border-gray-100 bg-white dark:border-gray-800 dark:bg-boxdark">
             <div className="flex h-full flex-col">
                 {/* Header Sidebar */}
                 <div className="flex items-center justify-between px-4 py-6">

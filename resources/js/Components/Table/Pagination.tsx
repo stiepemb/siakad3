@@ -108,6 +108,7 @@ export default function Pagination({
                     }`}
                     aria-disabled={data.current_page === 1}
                     preserveScroll={true}
+                    preserveState={true}
                 >
                     <IoIosArrowBack size={20} />
                 </Link>
@@ -118,6 +119,7 @@ export default function Pagination({
                     href={getPageUrl(
                         Math.min(data.current_page + 1, data.last_page),
                     )}
+                    preserveState={true}
                     className={`mx-1 flex h-6 w-6 items-center justify-center rounded-full ${
                         data.current_page === data.last_page
                             ? 'cursor-not-allowed bg-gray-300 text-gray-500'

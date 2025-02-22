@@ -43,7 +43,7 @@ export default function Table({
     notFoundTitle,
     notFoundDescription,
     onPerPageChange,
-    perPageOptions = [10, 25, 50, 100],
+    perPageOptions = [5, 10, 25, 50, 100],
     onSort,
     sortable = [],
 }: TableProps) {
@@ -86,9 +86,10 @@ export default function Table({
                             <select
                                 className="w-20 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 dark:border-gray-600 dark:bg-boxdark dark:text-white"
                                 value={meta?.per_page}
-                                onChange={(e) =>
-                                    onPerPageChange(Number(e.target.value))
-                                }
+                                onChange={(e) => {
+                                    e.preventDefault();
+                                    onPerPageChange(Number(e.target.value));
+                                }}
                             >
                                 {perPageOptions.map((option) => (
                                     <option key={option} value={option}>

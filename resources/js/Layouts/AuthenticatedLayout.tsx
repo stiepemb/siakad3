@@ -58,6 +58,7 @@ export default function AuthenticatedLayout({
     };
 
     const pathnames = location.split('/').filter((x) => x);
+    console.log(user);
 
     return (
         <>
@@ -67,7 +68,7 @@ export default function AuthenticatedLayout({
                     <div className="flex flex-1 flex-col overflow-x-hidden">
                         <Header
                             user={user.name}
-                            userRole="Mahasiswa"
+                            userRole={user.default_role}
                             avatar=""
                             navItems={navItems}
                             activeMenu={activeMenu}

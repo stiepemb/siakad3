@@ -1,6 +1,7 @@
 import { Config } from 'ziggy-js';
 
 export interface User {
+    default_role: string;
     level_id: number;
     id: number;
     name: string;

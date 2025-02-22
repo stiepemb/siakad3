@@ -21,7 +21,7 @@ class UserPermissionController extends Controller
             $query->where('guard_name', 'web');
         }
 
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', 5);
         $sortField = $request->input('sort_field', 'id');
         $sortDirection = $request->input('sort_direction', 'asc');
 

@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { AiOutlineUsergroupAdd } from 'react-icons/ai';
 import { BsTrash } from 'react-icons/bs';
 import { GiSecurityGate } from 'react-icons/gi';
-import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 
 type Permission = {
     id: number;
@@ -60,38 +60,34 @@ export default function PermissionIndex({
 
     const confirmDelete = () => {
         if (selectedId) {
+            setIsOpen(false);
             router.delete(route('system.permissions.destroy', selectedId), {
                 onSuccess: () => {
-                    toast.success(
-                        `Permission ${
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: `Permission ${
                             dataPermissions.find(
                                 (permission) => permission.id === selectedId,
                             )?.name
                         } berhasil dihapus`,
-                        {
-                            position: 'top-right',
-                            autoClose: 2000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                            icon: <BsTrash className="text-red" />,
-                            theme: 'light',
-                            style: {
-                                width: '100%',
-                            },
-                        },
-                    );
-                    setIsOpen(false);
+                        showConfirmButton: false,
+                        timer: 1500,
+                        toast: true,
+                        position: 'top-right',
+                        theme: 'light',
+                    });
                 },
                 onError: () => {
-                    toast.error(
-                        `Gagal menghapus permission ${
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: `Gagal menghapus permission ${
                             dataPermissions.find(
                                 (permission) => permission.id === selectedId,
                             )?.name
                         }`,
-                    );
+                    });
                 },
             });
         }

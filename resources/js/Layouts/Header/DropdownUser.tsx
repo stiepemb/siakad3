@@ -39,7 +39,7 @@ const DropdownUser = () => {
                         <li>
                             <Link
                                 href={route('profile.edit')}
-                                className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary dark:text-gray dark:hover:text-white lg:text-base"
+                                className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary dark:text-gray dark:hover:text-secondary lg:text-base"
                             >
                                 <FaUserAlt />
                                 My Profile
@@ -49,7 +49,7 @@ const DropdownUser = () => {
                     <Link
                         href={route('logout')}
                         method="post"
-                        className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary dark:text-gray dark:hover:text-white lg:text-base"
+                        className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary dark:text-gray dark:hover:text-secondary lg:text-base"
                     >
                         <FaSignOutAlt />
                         Log Out

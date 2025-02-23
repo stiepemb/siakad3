@@ -4,7 +4,6 @@ import { navItems } from '@/lib/navItems';
 import { useAppStore } from '@/Store/useAppStore';
 import { usePage } from '@inertiajs/react';
 import { PropsWithChildren, useEffect } from 'react';
-import { ToastContainer } from 'react-toastify';
 import Header from './Header/Header';
 import Sidebar from './Sidebar/Sidebar';
 
@@ -58,11 +57,9 @@ export default function AuthenticatedLayout({
     };
 
     const pathnames = location.split('/').filter((x) => x);
-    console.log(user);
 
     return (
         <>
-            <ToastContainer />
             <div className="flex h-screen">
                 <div className="flex h-screen w-full dark:bg-black">
                     <div className="flex flex-1 flex-col overflow-x-hidden">

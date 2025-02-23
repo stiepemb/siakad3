@@ -20,7 +20,7 @@ export default function BreadCrumb({ pathnames }: { pathnames: string[] }) {
                     <li className="inline-flex items-center">
                         <Link
                             href="/dashboard"
-                            className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white"
+                            className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-white dark:hover:text-secondary"
                         >
                             <svg
                                 className="me-2.5 h-3 w-3"

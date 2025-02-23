@@ -67,83 +67,52 @@ class UserPermissionController extends Controller
     public function store(Request $request)
     {
         $this->hasPermissionTo('SYSTEM-SETTING-PERMISSIONS_STORE');
-        $validated = $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                function ($attribute, $value, $fail) use ($request) {
-                    if ($request->has('group')) {
-                        $value = $value . '-GROUP';
-                    }
-                    $exist = Permission::where('name', 'like', "%$value%")
-                        ->where('guard_name', 'web')
-                        ->exists();
 
-                    if ($exist) {
-                        $fail('Nama Permission telah tersedia, mohon ganti dengan yang lain');
-                    }
-                }
-            ],
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
             'group' => 'required|in:0,1',
         ], [
-            'name.required' => 'Nama permission mohon untuk di isi',
-            'group.required' => 'Group permission mohon untuk di isi',
+            'name.required' => 'Nama permission mohon untuk diisi',
+            'group.required' => 'Group permission mohon untuk diisi',
             'group.in' => 'Group permission hanya boleh diisi dengan 0 atau 1',
         ]);
+
+        $nama = strtoupper($validated['name']);
+        $group = $validated['group'];
+        $permissionName = ($group == 1) ? "{$nama}-GROUP" : "{$nama}_BROWSE";
+
+        // 🔍 Cek apakah permission sudah ada di database (web atau api)
+        $exists = Permission::where('name', $permissionName)->exists();
+
+        if ($exists) {
+            return redirect()->back()->withErrors([
+                'name' => 'Nama Permission sudah digunakan, mohon pilih nama lain.',
+            ])->withInput();
+        }
+
         try {
-
-
             DB::beginTransaction();
-
-            $permission = new Permission;
             $now = \Carbon\Carbon::now()->format('Y-m-d H:i:s');
-            $nama = strtoupper($validated['name']);
-            $group = strtoupper($validated['group']);
 
             if ($group == 1) {
-                $permission->insert([
-                    ['name' => "{$nama}-GROUP", 'guard_name' => 'web', 'created_at' => $now, 'updated_at' => $now],
+                Permission::insert([
+                    ['name' => $permissionName, 'guard_name' => 'web', 'created_at' => $now, 'updated_at' => $now],
+                    ['name' => $permissionName, 'guard_name' => 'api', 'created_at' => $now, 'updated_at' => $now],
                 ]);
-
-                $exist = Permission::where('name', 'like', "%$nama%")
-                    ->where('guard_name', 'api')
-                    ->exists();
-
-                if (!$exist) {
-                    $permission->insert([
-                        ['name' => "{$nama}-GROUP", 'guard_name' => 'api', 'created_at' => $now, 'updated_at' => $now],
-                    ]);
-                }
             } else {
-                $permission->insert([
-                    ['name' => "{$nama}_BROWSE", 'guard_name' => 'web', 'created_at' => $now, 'updated_at' => $now],
-                    ['name' => "{$nama}_SHOW", 'guard_name' => 'web', 'created_at' => $now, 'updated_at' => $now],
-                    ['name' => "{$nama}_STORE", 'guard_name' => 'web', 'created_at' => $now, 'updated_at' => $now],
-                    ['name' => "{$nama}_UPDATE", 'guard_name' => 'web', 'created_at' => $now, 'updated_at' => $now],
-                    ['name' => "{$nama}_DESTROY", 'guard_name' => 'web', 'created_at' => $now, 'updated_at' => $now],
-                ]);
-
-                $exist = Permission::where('name', 'like', "%$nama%")
-                    ->where('guard_name', 'api')
-                    ->exists();
-
-                if (!$exist) {
-                    $permission->insert([
-                        ['name' => "{$nama}_BROWSE", 'guard_name' => 'api', 'created_at' => $now, 'updated_at' => $now],
-                        ['name' => "{$nama}_SHOW", 'guard_name' => 'api', 'created_at' => $now, 'updated_at' => $now],
-                        ['name' => "{$nama}_STORE", 'guard_name' => 'api', 'created_at' => $now, 'updated_at' => $now],
-                        ['name' => "{$nama}_UPDATE", 'guard_name' => 'api', 'created_at' => $now, 'updated_at' => $now],
-                        ['name' => "{$nama}_DESTROY", 'guard_name' => 'api', 'created_at' => $now, 'updated_at' => $now],
-                    ]);
+                $permissions = ['BROWSE', 'SHOW', 'STORE', 'UPDATE', 'DESTROY'];
+                $data = [];
+                foreach ($permissions as $perm) {
+                    $data[] = ['name' => "{$nama}_{$perm}", 'guard_name' => 'web', 'created_at' => $now, 'updated_at' => $now];
+                    $data[] = ['name' => "{$nama}_{$perm}", 'guard_name' => 'api', 'created_at' => $now, 'updated_at' => $now];
                 }
+                Permission::insert($data);
             }
+
             activity()
                 ->event('store-permission')
-                ->withProperties([
-                    'ip' => $request->ip(),
-                ])
-                ->tap(function(Activity $activity) {
+                ->withProperties(['ip' => $request->ip()])
+                ->tap(function (Activity $activity) {
                     $activity->log_name = 'system-user';
                 })
                 ->log("Nama permission {$nama} berhasil disimpan");
@@ -153,9 +122,10 @@ class UserPermissionController extends Controller
             return redirect()->route('system.permissions.index')->with('success', 'Permission berhasil dibuat');
         } catch (\Throwable $th) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Permission gagal dibuat');
+            return redirect()->back()->withErrors(['general' => 'Terjadi kesalahan, silakan coba lagi.']);
         }
     }
+
 
     public function destroy(Request $request, $id)
     {
@@ -168,13 +138,13 @@ class UserPermissionController extends Controller
             DB::table('permissions')
                 ->where('name', $permission->name)
                 ->delete();
-            
+
             activity()
                 ->event('destroy-permission')
                 ->withProperties([
                     'ip' => $request->ip(),
                 ])
-                ->tap(function(Activity $activity) {
+                ->tap(function (Activity $activity) {
                     $activity->log_name = 'system-user';
                 })
                 ->log("Nama permission {$permission->name} berhasil dihapus");

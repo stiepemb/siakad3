@@ -16,8 +16,10 @@ export default function Sidebar({ sideItems }: SidebarProps) {
                 {/* Header Sidebar */}
                 <div className="flex items-center justify-between px-4 py-6">
                     <div className="flex items-center gap-2">
-                        <FaUniversity className="h-8 w-8" />
-                        <h1 className="text-xl font-bold">SIAKAD v3</h1>
+                        <FaUniversity className="h-8 w-8 text-primary dark:text-secondary" />
+                        <h1 className="text-xl font-bold text-primary dark:text-white">
+                            SIAKAD v3
+                        </h1>
                     </div>
                 </div>
 

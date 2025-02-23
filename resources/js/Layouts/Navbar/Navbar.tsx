@@ -10,7 +10,7 @@ import { HiChevronDown } from 'react-icons/hi';
 
 export default function Navbar({ navItems, activeMenu, handleDropdownClick }) {
     return (
-        <nav className="h-16 w-full bg-white/90 p-4 text-sm text-meta-4 shadow-md backdrop-blur-md dark:text-white">
+        <nav className="h-16 w-full bg-white/90 p-4 text-sm text-meta-4 shadow-md backdrop-blur-md dark:bg-boxdark dark:text-white dark:shadow-none dark:backdrop-blur-none">
             <div className="flex h-full items-center justify-evenly">
                 <div className="relative flex space-x-4">
                     {navItems.map((item) => {
@@ -26,7 +26,7 @@ export default function Navbar({ navItems, activeMenu, handleDropdownClick }) {
                                     className={`flex items-center gap-2 rounded-md px-4 py-2 ${
                                         isActive
                                             ? 'bg-blue-500 text-white'
-                                            : 'hover:bg-gray-200'
+                                            : 'hover:bg-gray-200 dark:hover:bg-boxdark dark:hover:text-secondary'
                                     }`}
                                 >
                                     {item.icons &&
@@ -46,7 +46,7 @@ export default function Navbar({ navItems, activeMenu, handleDropdownClick }) {
                                     leaveFrom="opacity-100 translate-y-0 scale-100"
                                     leaveTo="opacity-0 translate-y-2 scale-95"
                                 >
-                                    <MenuItems className="absolute left-0 mt-2 w-40 origin-top-left rounded-md bg-white shadow-lg transition-all duration-200">
+                                    <MenuItems className="absolute left-0 mt-2 w-40 origin-top-left rounded-md bg-white shadow-lg transition-all duration-200 dark:bg-boxdark">
                                         <div className="py-2">
                                             {item.dropDownItems.map(
                                                 (dropDown) => (
@@ -57,8 +57,8 @@ export default function Navbar({ navItems, activeMenu, handleDropdownClick }) {
                                                             <button
                                                                 className={`block w-full rounded-md px-4 py-2 text-left transition-colors ${
                                                                     active
-                                                                        ? 'bg-gray-100 text-secondary'
-                                                                        : 'text-black'
+                                                                        ? 'text-secondary dark:bg-boxdark'
+                                                                        : 'text-black dark:text-white'
                                                                 }`}
                                                                 onClick={() =>
                                                                     handleDropdownClick(

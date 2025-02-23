@@ -17,7 +17,7 @@ const Header = (props: HeaderProps) => {
     return (
         <>
             <div className="sticky top-0 z-999">
-                <header className="flex flex-col border-b bg-white dark:bg-boxdark">
+                <header className="flex flex-col border-b bg-white dark:border-boxdark dark:bg-boxdark">
                     <div className="flex flex-grow items-center justify-between px-4 py-6 md:px-6 2xl:px-11">
                         <div className="flex w-full items-center justify-between gap-2">
                             <div>

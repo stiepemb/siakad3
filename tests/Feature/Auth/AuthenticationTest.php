@@ -10,9 +10,18 @@ class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Indicates whether the default seeder should run before each test.
+     *
+     * @var bool
+     */
+    protected $seed = true;
+
+    private $routeName = 'login';
+    
     public function test_login_screen_can_be_rendered(): void
     {
-        $response = $this->get('/login');
+        $response = $this->get(route($this->routeName));
 
         $response->assertStatus(200);
     }
@@ -21,7 +30,7 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->post('/login', [
+        $response = $this->post(route($this->routeName), [
             'email' => $user->email,
             'password' => 'password',
         ]);
@@ -34,7 +43,7 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->post('/login', [
+        $this->post(route($this->routeName), [
             'email' => $user->email,
             'password' => 'wrong-password',
         ]);
@@ -46,9 +55,9 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->post('/logout');
+        $response = $this->actingAs($user)->post(route('logout'));
 
         $this->assertGuest();
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('login'));
     }
 }

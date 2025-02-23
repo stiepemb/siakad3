@@ -13,6 +13,13 @@ class EmailVerificationTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Indicates whether the default seeder should run before each test.
+     *
+     * @var bool
+     */
+    protected $seed = true;
+    
     public function test_email_verification_screen_can_be_rendered(): void
     {
         $user = User::factory()->unverified()->create();

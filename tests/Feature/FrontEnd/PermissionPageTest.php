@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\FrontEnd\System\Users;
+namespace Tests\Feature\FrontEnd;
 
 use App\Models\User;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;

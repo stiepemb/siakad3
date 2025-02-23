@@ -11,6 +11,13 @@ class PasswordUpdateTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Indicates whether the default seeder should run before each test.
+     *
+     * @var bool
+     */
+    protected $seed = true;
+    
     public function test_password_can_be_updated(): void
     {
         $user = User::factory()->create();
